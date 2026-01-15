@@ -20,3 +20,5 @@ helm install slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --namespace=slurm --create-namespace
 ```
 
+## 레퍼런스 ##
+* https://github.com/SlinkyProject/slurm-operator

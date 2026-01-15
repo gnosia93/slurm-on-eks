@@ -3,7 +3,7 @@
 
 ### _Topics_ ###
 
-* [C1. VPC 생성하기]()
+* [C1. VPC 생성하기](https://github.com/gnosia93/slurm-on-k8s/tree/main/tf)
 
 
 ## 레퍼런스 ##

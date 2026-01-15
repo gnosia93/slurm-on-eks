@@ -91,7 +91,7 @@ sh Anaconda3-2023.03-1-Linux-x86_64.sh
 ```
 export AWS_REGION=$(aws ec2 describe-availability-zones --query 'AvailabilityZones[0].RegionName' --output text)
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-export CLUSTER_NAME="aerial-on-eks"
+export CLUSTER_NAME="slinky-on-k8s"
 export K8S_VERSION="1.34"
 export KARPENTER_VERSION="1.8.1"
 export VPC_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values="${CLUSTER_NAME}" --query "Vpcs[].VpcId" --output text)

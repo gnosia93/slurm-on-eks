@@ -2,7 +2,7 @@
 
 
 본 워크샵은 EKS 클러스터에서 Slurm(Simple Linux Utility for Resource Management) 클러스터를 활용한 분산 트레이닝에 대해서 다룬다. Llama 3와 같은 대규모 모델을 AWS 인프라에서 가장 비용 효율적이고 안정적으로 학습시키는 법을 마스터하실 수 있습니다. 
-[Slurm 아키텍처의 이해]를 먼저 읽어 보시기 바랍니다.
+[Slurm 아키텍처의 이해]를 먼저 읽어 보시기 바랍니다. Slurm은 태생이 HPC(고성능 컴퓨팅)용이라, 쿠버네티스와 달리 별도의 설정을 하지 않아도 기본적으로 "자원이 100% 확보되지 않으면 아예 시작도 안 하는" 갱 스케줄링 방식으로 작동한다.
 
 
 * http://ec2-43-203-227-222.ap-northeast-2.compute.amazonaws.com:9090

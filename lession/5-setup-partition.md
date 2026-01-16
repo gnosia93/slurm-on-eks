@@ -10,6 +10,11 @@ clusters:
       - name: "gpu-partition"
         instance_types: ["p4dn.24xlarge"] # AWS 인스턴스 타입 지정
         nodes: 2
+        # EFA 활성화 핵심 설정
+        efa_enabled: true  
+        # 또는 annotation/label로 처리하는 경우
+        labels:
+          ://vpc.amazonaws.com: "true" 
         gres: "gpu:8"
       - name: "cpu-partition"
         instance_types: ["c5.24xlarge"]

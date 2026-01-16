@@ -1,3 +1,5 @@
+## 장애 대응 및 복구 ##
+
 Slinky 환경에서 장애가 발생하면, Slurm의 작업 관리 메커니즘과 Kubernetes의 자가 치유(Self-healing) 기능이 동시에 작동합니다. Slurm fault tolerance(SchedMD) 원칙에 따른 시나리오별 동작은 다음과 같습니다.
 
 ### 1. 작업 중인 파드(Pod) 또는 프로세스 장애 ###
@@ -21,3 +23,39 @@ Slinky 환경에서 장애가 발생하면, Slurm의 작업 관리 메커니즘�
 #### 💡 실무 팁: ####
 sinfo에서 특정 노드가 drain 상태로 멈춰 있다면, 관리자가 scontrol update nodename=[노드명] state=resume 명령어로 수동 복구해줘야 할 수도 있습니다.
 지금 발생한 특정 에러 메시지가 있나요? 아니면 장애 테스트(Chaos Testing)를 준비 중이신가요? 구체적인 상황을 알려주시면 대응 명령어를 정리해 드릴게요.
+
+## 장애 테스트(Chaos Testing) ##
+Slurm on EKS(Slinky) 환경에서의 카오스 테스트(Chaos Testing)는 "컴퓨팅 자원의 유동성"과 "대규모 모델 학습의 연속성"을 검증하는 데 초점을 맞춰야 합니다. 특히 p4dn 같은 고가 가용 자원을 쓰시므로, 장애 시 자원이 방치되지 않고 잘 회수되는지도 중요합니다.
+
+### 1. 테스트 도구 추천 ###
+직접 노드를 끄는 방식도 좋지만, 자동화된 도구를 쓰면 재현성이 높아집니다.
+* AWS Fault Injection Service (FIS): AWS 공식 도구로, 특정 EC2 인스턴스를 중단시키거나 네트워크 레이턴시를 강제로 발생시킬 수 있습니다.
+* Chaos Mesh: 쿠버네티스 네이티브 도구입니다. Slinky 컨트롤러 파드만 골라 죽이거나(Pod Kill), GPU 노드 간 통신을 끊는(Network Chaos) 테스트에 최적입니다.
+
+### 2. 카오스 테스트 시나리오 디자인 (4단계) ###
+
+#### 컴퓨팅 노드 급사 (Node Termination) ####
+* 가설: 학습 중 p4dn 노드 하나가 점검 등으로 삭제되어도, Slurm은 작업을 재제출(Requeue)하고 Karpenter는 새 노드를 즉시 띄울 것이다.
+* 방법: 학습이 한창일 때 kubectl delete node [노드명] 수행.
+* 관찰 포인트:
+  * Slurm 작업이 FAILED로 끝나는지, 아니면 대기열로 다시 들어가는지.
+  * Karpenter가 5분 이내에 새 p4dn을 바인딩하는지.
+
+#### EFA 네트워크 지연 (Network Latency) ####
+* 가설: 노드 간 통신이 느려지면 NCCL 타임아웃이 발생하며, 시스템은 안전하게 작업을 중단하고 에러 로그를 남길 것이다.
+* 방법: Chaos Mesh의 NetworkChaos를 사용해 100ms 이상의 지연 발생.
+* 관찰 포인트: 분산 학습 프레임워크(PyTorch/DeepSpeed)가 좀비 프로세스가 되지 않고 깔끔하게 종료되는가?
+
+#### Slurm 컨트롤러(Slinky) 장애 ####
+* 가설: Slurm 컨트롤러 파드가 재시작되어도 실행 중인 작업(Job)은 영향 없이 계속 돌아갈 것이다.
+* 방법: kubectl delete pod -l app.kubernetes.io/name=slinky-controller -n slurm
+* 관찰 포인트: 컨트롤러 복구 후 squeue를 쳤을 때 작업 상태가 유실 없이 복구되는가?
+
+#### 리소스 부족 (Insufficient Capacity) ####
+* 가설: AWS 가용 영역(AZ)에 p4dn 재고가 없을 때, Slurm 작업은 PENDING 상태로 대기하며 시스템이 뻗지 않을 것이다.
+* 방법: 카펜터 NodePool에서 사용 불가능한 인스턴스 타입을 강제로 지정하거나 대수를 초과해서 요청.
+
+
+
+
+

@@ -20,3 +20,40 @@
 
 #### 4. 다중 클러스터 연동 (Multi-Cluster Management) ####
 여러 개의 Slurm 클러스터가 있을 때, 하나의 중앙 DB(slurmdbd)에 연결하여 모든 클러스터의 자원을 통합 관리하고 작업 현황을 한곳에서 볼 수 있게 합니다. 
+
+
+작업 실행 흐름 (Architecture Workflow)
+* 제출: 사용자가 로그인 노드에서 sbatch 실행 → slurmctld로 전달.
+* 기록: slurmctld가 slurmdbd에 "누가 작업을 시작함"이라고 기록 요청.
+* 할당: slurmctld가 가용 리소스를 확인(Slinky라면 Karpenter를 통해 노드 생성 트리거).
+* 실행: slurmctld가 해당 노드의 slurmd에게 명령 전달 → slurmd가 slurmstepd를 띄워 학습 시작.
+* 완료: 작업 종료 후 slurmdbd에 사용량 데이터 최종 저장 및 노드 반납
+
+#### Slinky(EKS)만의 아키텍처 특징 ####
+* 고가용성(HA): 컨트롤러가 K8s Pod으로 실행되므로, 장애 시 Amazon EKS가 즉시 새로운 컨트롤러를 살려냅니다.
+* 유연한 확장: slurmd가 떠 있는 컴퓨팅 노드 자체가 K8s Pod이며, 이는 필요할 때만 생성되는 Karpenter 노드 위에 올라갑니다.
+
+#### 작업 스케줄링 ####
+Slurm의 스케줄러가 작업을 처리하는 과정은 단순히 빈자리를 찾는 것을 넘어, 우선순위(Priority)와 백필(Backfill)이라는 두 가지 핵심 메커니즘을 통해 클러스터 효율을 극대화합니다
+
+#### 1. 작업 제출 및 검증 (Submission) ####
+사용자가 sbatch를 실행하면 slurmctld가 이를 수신합니다.
+* 검증: 사용자가 해당 파티션을 쓸 권한이 있는지, 요청한 GPU 개수가 파티션 제한 내에 있는지 확인합니다.
+* 대기: 검증을 통과하면 작업은 PENDING 상태로 대기열(Queue)에 들어갑니다.
+
+#### 2. 우선순위 계산 (Priority Tiering) ####
+대기열에 작업이 쌓이면, 스케줄러는 누구를 먼저 실행할지 점수를 매깁니다. Slurm Multifactor Priority 가이드에 따르면 다음 요소들이 합산됩니다.
+* Fairshare: 최근에 자원을 적게 쓴 팀의 작업에 가산점을 줍니다. (DB 데이터 활용)
+* Job Age: 대기열에서 오래 기다린 작업일수록 점수가 높아집니다.
+* Partition: 특정 파티션(예: 긴급 전용)에 더 높은 가중치를 줄 수 있습니다. 
+
+#### 3. 스케줄링 알고리즘 (Scheduling Logic) ####
+가장 높은 점수의 작업을 실행하기 위해 리소스를 매칭합니다.
+* Main Scheduler: 가장 높은 우선순위의 작업을 위해 리소스를 예약합니다.
+* Backfill Scheduling (핵심): 만약 1순위 작업이 큰 자원(p4dn 10대 등)을 기다리느라 리소스가 비어 있다면, 그 틈새 시간에 끝날 수 있는 작은 작업들을 먼저 끼워 넣어 GPU 유휴 시간을 없앱니다. 
+
+#### 4. Slinky의 동적 할당 (Cloud-Bursting) ####
+Slinky 아키텍처만의 독특한 단계입니다.
+* Trigger: 스케줄러가 실행할 작업을 확정했지만 노드가 없다면, Slinky 컨트롤러가 Kubernetes에 작업용 Pod 생성을 요청합니다.
+* Karpenter 개입: K8s API가 이 요청을 받으면 Karpenter가 즉시 AWS에서 p4dn.24xlarge 인스턴스를 프로비저닝합니다.
+* Launch: 노드 준비 완료 → slurmd 구동 → 작업 시작.

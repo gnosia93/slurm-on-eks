@@ -1,6 +1,9 @@
 # slinky-on-k8s
 
 
+본 워크샵은 EKS 클러스터에서 Slurm(Simple Linux Utility for Resource Management) 클러스터를 활용한 분산 트레이닝에 대해서 다룬다.  
+
+
 ### _Topics_ ###
 
 * [C1. VPC 생성하기](https://github.com/gnosia93/slurm-on-k8s/tree/main/tf)

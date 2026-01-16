@@ -90,12 +90,13 @@ Learn more about Slinky:
   - Documentation: https://slinky.schedmd.com
 ```
 
-## SC ##
+## Storage Class 설정(gp3) ##
 ```
 export AWS_REGION=$(aws ec2 describe-availability-zones --query 'AvailabilityZones[0].RegionName' --output text)
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 export CLUSTER_NAME="slinky-on-k8s"
 ```
+#### 1. OIDC 확인 ####
 OIDC 가 설치되어 있는지 확인한다. 
 ```
 aws eks describe-cluster --name $CLUSTER_NAME --query "cluster.identity.oidc.issuer" --output text
@@ -104,6 +105,7 @@ aws eks describe-cluster --name $CLUSTER_NAME --query "cluster.identity.oidc.iss
 ```
 https://oidc.eks.ap-northeast-2.amazonaws.com/id/FD17E419F758EAAE2455EEEF9F2D40B5
 ```
+#### 2. 애드온 확인 ####
 aws-ebs-csi-driver 애드온이 설치되어 있는지 확인한다. 
 ```
 aws eks list-addons --cluster-name ${CLUSTER_NAME} --output=text
@@ -118,6 +120,19 @@ ADDONS  metrics-server
 ADDONS  vpc-cni
 ```
 
+#### IRSA 생성 ####
+IAM 역할 생성 및 AWS 정책 연결 (EKS 전용 서비스 계정 생성) 한다.
+```
+eksctl create iamserviceaccount \
+  --name ebs-csi-controller-sa \
+  --namespace kube-system \
+  --cluster ${CLUSTER_NAME} \
+  --region ${AWS_REGION} \
+  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEKS_EBS_CSI_Driver_Policy \
+  --approve \
+  --role-only \
+  --role-name EBS_CSI_DriverRole-${CLUSTER_NAME}
+```
 
 
 ## 레퍼런스 ##

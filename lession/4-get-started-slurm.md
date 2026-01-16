@@ -32,3 +32,4 @@ PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
 slinky       up   infinite      1   idle slinky-0
 all*         up   infinite      1   idle slinky-0
 ```
+sinfo는 클러스터 내의 노드(Node)와 파티션(Partition) 상태를 확인할 때 사용한다. 

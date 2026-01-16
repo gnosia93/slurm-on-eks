@@ -56,6 +56,18 @@ Slurm on EKS(Slinky) 환경에서의 카오스 테스트(Chaos Testing)는 "컴�
 * 방법: 카펜터 NodePool에서 사용 불가능한 인스턴스 타입을 강제로 지정하거나 대수를 초과해서 요청.
 
 
+## sbatch 설정 ##
+```
+#SBATCH --requeue                  # <--- 핵심: 자동 재제출 활성화
+```
+* 장애 발생: 학습 중 p4dn 노드 하나를 kubectl delete node로 강제 삭제합니다.
+* Slurm 감지: Slurm 컨트롤러가 노드 통신 두절을 감지하고 작업을 NODE_FAIL 상태로 전환합니다.
+* 재제출: --requeue가 설정되어 있으므로, 작업은 즉시 PENDING 상태로 대기열로 돌아갑니다.
+* 복구: Karpenter가 새로운 노드를 프로비저닝하면, Slurm은 동일한 작업 ID(또는 새 ID)로 작업을 다시 시작합니다.
 
+## 주의 사항 및 팁 ##
+* 체크포인트(Checkpoint): Slurm은 작업을 다시 던져줄 뿐, 학습 데이터를 복구해주지는 않습니다. 반드시 PyTorch Checkpoint 기능을 사용하여 /shared 폴더 같은 공용 스토리지에 진행 상황을 저장해야 합니다.
+* 무한 루프 방지: 스크립트 자체의 결함으로 종료될 때도 재제출되면 무한 루프에 빠질 수 있습니다. Slurm Job Exit Codes 문서에 따르면, 특정 종료 코드(예: 1)일 때는 재제출하지 않도록 관리자 설정(RequeueExit)이 가능합니다.
+* 상태 확인: 재제출된 작업은 squeue에서 R 상태 옆에 (REQUEUED) 표시가 붙거나 노출됩니다.
 
 

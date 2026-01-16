@@ -39,9 +39,11 @@ scontrol show partition gpu-partition
 ```
 
 ### 2. 동적 노드 프로비저닝 (Auto-scaling) ###
-작업이 들어올 때만 p4dn 같은 고가 자원을 띄우게 할 수 있다.
+Slinky는 Slurm의 작업 요청을 Kubernetes의 Pod 요청으로 변환하고, 이때 Karpenter(카펜터)가 이 Pod을 보고 "p4dn 2대가 필요하네?"라며 AWS EC2를 즉시 생성하여 클러스터에 붙인다.
 sinfo에서 확인했을 때 파티션 상태가 idle 혹은 cloud로 보일 수 있는데, 이는 노드가 현재는 없지만, 작업 제출 시 자동으로 생성된다는 뜻이다.
 GPU 파티션 설정 시 AWS EFA(Elastic Fabric Adapter) 활성화 옵션이 파티션 정의에 포함되어 있는지 꼭 확인해야 한다.
+
+
 
 
 ### 3. 파티션 확인하기 ###

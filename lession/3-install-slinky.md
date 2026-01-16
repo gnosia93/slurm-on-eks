@@ -90,6 +90,16 @@ Learn more about Slinky:
   - Documentation: https://slinky.schedmd.com
 ```
 
+## SC ##
+```
+export AWS_REGION=$(aws ec2 describe-availability-zones --query 'AvailabilityZones[0].RegionName' --output text)
+export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+export CLUSTER_NAME="slinky-on-k8s"
+
+aws eks describe-cluster --name $CLUSTER_NAME --query "cluster.identity.oidc.issuer" --output text
+```
+
+
 ## 레퍼런스 ##
 * https://github.com/SlinkyProject/slurm-operator
 * https://aws.amazon.com/ko/blogs/containers/running-slurm-on-amazon-eks-with-slinky/

@@ -88,6 +88,8 @@ EOF
 * 최신 PyTorch 분산 학습(torchrun)은 Slurm이 각 노드에 딱 하나의 관리자 프로세스만 띄우기를 권장한다.
 * Slurm은 노드 2개를 빌려오고, 각 노드에서 torchrun이라는 관리자 프로세스를 노드 마다 하나씩 (--ntasks-per-node=1) 실행한다.
 * torchrun이 실행된 후, 해당 노드 안에 있는 8개의 GPU(--nproc_per_node=8)에 맞춰 8개의 실제 학습 프로세스를 알아서 쪼개서 실행 된다.
+
+아래 명령어로 학습을 시작한다. 
 ```
 sbatch train_llama3.sh
 ```

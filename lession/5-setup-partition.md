@@ -44,6 +44,19 @@ sinfo에서 확인했을 때 파티션 상태가 idle 혹은 cloud로 보일 수
 GPU 파티션 설정 시 AWS EFA(Elastic Fabric Adapter) 활성화 옵션이 파티션 정의에 포함되어 있는지 꼭 확인해야 한다.
 
 
+* 카펜터 설치
+* 노드풀 설정
+
+* 3. Slinky와의 연결 (Taint & Toleration)
+이게 가장 중요합니다! Slurm 작업이 들어왔을 때 카펜터가 "아, 이건 Slurm용 노드구나"라고 알 수 있도록 Taint(용인) 설정을 맞춰야 합니다.
+Slurm 파티션 설정: Helm values.yaml의 partitions 섹션에 해당 노드풀의 레이블이나 Taint를 기입합니다.
+동작 원리: sbatch 제출 → Slinky가 Pod 생성 → Pod에 slurm-job 관련 Toleration 부여 → 카펜터가 이를 보고 일치하는 NodePool에서 p4dn 실행.
+
+* 4. 주의사항 (Scale-down)
+Time-to-Live (TTL): 작업이 끝나고 노드가 즉시 삭제되길 원한다면 카펜터 설정에서 disruption.consolidationPolicy: WhenEmpty를 설정하세요. Karpenter 정지 설정 가이드에서 상세 내용을 볼 수 있습니다.
+결론적으로, 카펜터 설치 + 노드풀 설정 + Slinky 파티션 레이블 매칭 이 3박자가 맞으면 자동으로 p4dn이 생겼다 사라졌다 하는 동적 환경이 완성됩니다.
+현재 노드풀 YAML을 직접 작성 중이신가요? 아니면 기존에 설치된 카펜터에 p4dn만 추가하려 하시나요? Spot 인스턴스 사용 여부를 알려주시면 비용 최적화 옵션도 덧붙여 드릴 수 있습니다.
+
 
 
 ### 3. 파티션 확인하기 ###

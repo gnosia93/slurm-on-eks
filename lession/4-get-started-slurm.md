@@ -53,6 +53,7 @@ squeue -u [사용자ID]
 
 #### 작업 샘플 ####
 ```
+cat <<EOF > train_llama3.sh
 #!/bin/bash
 #SBATCH --job-name=llama3_multinode       # 작업 이름
 #SBATCH --nodes=2                         # 사용할 노드 수 (p4dn 2대)
@@ -82,8 +83,10 @@ srun torchrun \
     --model_name_or_path $MODEL_PATH \
     --batch_size 4 \
     --use_fsdp True
+EOF
 ```
 
-
-
+```
+sbatch train_llama3.sh
+```
 

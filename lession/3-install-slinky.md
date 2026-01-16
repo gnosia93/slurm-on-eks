@@ -98,7 +98,10 @@ export CLUSTER_NAME="slinky-on-k8s"
 
 aws eks describe-cluster --name $CLUSTER_NAME --query "cluster.identity.oidc.issuer" --output text
 ```
-
+[결과]
+```
+https://oidc.eks.ap-northeast-2.amazonaws.com/id/FD17E419F758EAAE2455EEEF9F2D40B5
+```
 
 ## 레퍼런스 ##
 * https://github.com/SlinkyProject/slurm-operator

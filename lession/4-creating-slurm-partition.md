@@ -61,8 +61,8 @@ nodesets:
       # m7i.8xlarge 사양에 맞는 리소스 할당 (예시)
       resources:
         limits:
-          cpu: "30"      # 32 vCPU 중 OS/Kube 자원 제외
-          memory: "120Gi" # 128GiB 중 여유 공간 제외
+          cpu: "30"            # 32 vCPU 중 OS/Kube 자원 제외
+          memory: "120Gi"      # 128GiB 중 여유 공간 제외
     
     # Slurm 내부 노드 설정(slurm.conf)
     extraConfMap:

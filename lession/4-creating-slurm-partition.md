@@ -80,6 +80,10 @@ kubectl exec -it slurm-controller-0 -n slurm -c slurmctld -- /bin/bash
 slurm@slurm-controller-0:/tmp$ sinfo
 scontrol show partition gpu-partition
 ```
+아래 명령어로 로그를 확인한다. 
+```
+kubectl logs -n slinky -l app.kubernetes.io/name=slurm-operator
+```
 
 ### 2. 동적 프로비저닝 ###
 Slinky는 Kubernetes 위에서 Slurm을 돌리는 구조이므로, 파티션 정의는 보통 values.yaml 파일의 clusters 섹션에서 이루어진다.

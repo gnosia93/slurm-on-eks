@@ -173,6 +173,28 @@ replicaset.apps/slurm-restapi-5468d6d478   1         1         1       3m31s
 NAME                                READY   AGE
 statefulset.apps/slurm-controller   1/1     3m31s
 ```
+slinky 오브젝트들을 확인한다. 
+```
+kubectl get all -n slinky
+```
+[결과]
+```
+NAME                                          READY   STATUS    RESTARTS   AGE
+pod/slurm-operator-56d865fbc7-l9p42           1/1     Running   0          34m
+pod/slurm-operator-webhook-57cf4d6d85-gms68   1/1     Running   0          34m
+
+NAME                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
+service/slurm-operator           ClusterIP   None            <none>        8080/TCP,8081/TCP   34m
+service/slurm-operator-webhook   ClusterIP   172.20.86.109   <none>        443/TCP,8081/TCP    34m
+
+NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/slurm-operator           1/1     1            1           34m
+deployment.apps/slurm-operator-webhook   1/1     1            1           34m
+
+NAME                                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/slurm-operator-56d865fbc7           1         1         1       34m
+replicaset.apps/slurm-operator-webhook-57cf4d6d85   1         1         1       34m
+```
 
 ## 레퍼런스 ##
 * https://github.com/SlinkyProject/slurm-operator

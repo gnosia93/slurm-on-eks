@@ -318,8 +318,21 @@ aws ec2 describe-instances \
 ```
 [결과]
 ```
-
+----------------------------------------------------------------------------------------------------------------
+|                                               DescribeInstances                                              |
++---------------------+----------------------------+------------+-----------------+----------------------------+
+|     InstanceId      |           Name             | NodeGroup  |    PublicIp     |         SubnetId           |
++---------------------+----------------------------+------------+-----------------+----------------------------+
+|  i-018bfcac187415b75|  slurm-on-eks-ng-amx-Node  |  ng-amx    |  None           |  subnet-0fec677af847b90a2  |
+|  i-0b5c09314b2446319|  slurm-on-eks-ng-amx-Node  |  ng-amx    |  None           |  subnet-032de9fe98da7fdbb  |
+|  i-0690679b2c478ac9e|  slurm-on-eks-ng-arm-Node  |  ng-arm    |  None           |  subnet-032de9fe98da7fdbb  |
+|  i-046f7dd9596828ab6|  slurm-on-eks-ng-amx-Node  |  ng-amx    |  None           |  subnet-0ac8189839f1dfd67  |
+|  i-0c143e7e23965a7ec|  slurm-on-eks-ng-arm-Node  |  ng-arm    |  None           |  subnet-0c73c17db8ed13d1b  |
+|  i-03cb5c3be3a30f188|  slinky-code-server-x86    |  None      |  13.124.230.121 |  subnet-01ffa6d1d3aebd474  |
+|  i-0341e690e5aca7893|  slurm-on-eks-ng-amx-Node  |  ng-amx    |  None           |  subnet-0c73c17db8ed13d1b  |
++---------------------+----------------------------+------------+-----------------+----------------------------+
 ```
+ng-amx 에 생성된 4대의 ec2 인스턴스 및 ng-arm 에 생성된 2대의 인스턴스가 프라이빗 서브넷에 해당된 것을 확인할 수 있다.
 
 ## 클러스터 삭제 ##
 #### 1. 카펜터 인스턴스 프로파일 삭제 #### 

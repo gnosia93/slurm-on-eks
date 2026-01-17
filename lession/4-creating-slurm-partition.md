@@ -195,7 +195,7 @@ nodesets:
 
 # partitions 하위는 리스트 형식을 유지하되, nodes 이름이 위와 정확히 일치해야 함
 partitions:
-  amx:
+  gpu:
     enabled: true
     nodesets: 
       - "ns-gpu"
@@ -206,29 +206,14 @@ partitions:
 EOF
 ```
 
-
-
-[values.yaml]
 ```
-clusters:
-  - name: "slinky-cluster"
-    partitions:
-      - name: "gpu-partition"
-        instance_types: ["p4dn.24xlarge"]
-        # 1. 노드 선택 (NodePool의 labels와 일치해야 함)
-        nodeSelector:
-          karpenter.sh/nodepool: slurm-gpu-pool
-        
-        # 2. 테인트 허용 (NodePool에 설정된 taints가 있다면 필수)
-        tolerations:
-          - key: "slinky.io/usage"
-            operator: "Equal"
-            value: "gpu-task"
-            effect: "NoSchedule"
-        
-        gres: "gpu:8"
-
+scontrol show node ns-gpu-0
+# GPU 1개를 요청하는 인터랙티브 세션 실행
+srun --gres=gpu:1 --partition=gpu hostname
+Slinky는 GRES 자동 구성을 지원하지만, gres.conf 파일이 컨테이너 내부에 적절히 생성되었는지 kubectl exec으로 들어가 /etc/slurm/gres.conf를 확인
 ```
+
+
 
 
 

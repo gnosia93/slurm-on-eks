@@ -115,7 +115,7 @@ Learn more about Slinky:
 ```
 export AWS_REGION=$(aws ec2 describe-availability-zones --query 'AvailabilityZones[0].RegionName' --output text)
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-export CLUSTER_NAME="slinky-on-k8s"
+export CLUSTER_NAME="slurm-on-eks"
 ```
 
 default 스토리지 클래스를 gp3 타입으로 생성한다.

@@ -58,8 +58,8 @@ nodesets:
         # Slinky 공식 이미지를 명시해야 합니다.
         repository: ghcr.io/slinkyproject/slurmd
         tag: 25.11-ubuntu24.04
-      logfile: {}
-      container: {}
+#      logfile: {}
+#      container: {}
 
 partitions:
   amx-partition:

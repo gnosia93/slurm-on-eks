@@ -7,7 +7,7 @@ Slurm에서 파티션(Partition)은 여러 대의 컴퓨팅 노드를 논리적�
 * 우선순위 (Priority): 여러 파티션이 동일한 노드를 공유할 때, 어떤 파티션의 작업을 먼저 실행할지 결정한다. 
 
 ### 1. AMEX CPU 파티션 생성 ###
-eks 매니지드 노드 그룹 ng-amx 의 라벨을 확인한다.
+eks 매니지드 노드 그룹 ng-amx 를 구성하는 4대의 m7i.8xlarge 인스턴스를 활용하여 AMEX CPU 파티션 생성할 예정이다. 라벨 정보가 필요하므로 라벨 부터 확인한다. 
 ```
 aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
   --nodegroup-name ng-amx --query 'nodegroup.labels' --output text 
@@ -49,8 +49,8 @@ nodesets:
       type: RollingUpdate
     podSpec:                   
       nodeSelector:                        # node selector 를 이용하여 slurmd 가 설치될 노드를 식별한다.
-        workload-type: "slurm-compute"
-        architecture: "amx-enabled"
+        workload-type: "slurm-compute"     # workoad-type 라벨
+        architecture: "amx-enabled"        # architecture 라벨 
       tolerations:                         # 노드그룹에 설정된 taint 를 무력화 시키기 위해서 설정
         - key: "workload"                  # slurmd 파드가 스케줄링 되면서 자동으로 이 toleration 이 slurmd 파드에 붙는다. 
           operator: "Equal"

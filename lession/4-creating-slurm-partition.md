@@ -42,8 +42,8 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 ```
 cat <<EOF > amx-nodeset.yaml
 nodesets:
-  amx-compute-nodes:  # 노드셋 이름
-    count: 4          # desiredCapacity와 동일하게 설정
+  ns-amx:                   # 노드셋 이름
+    count: 4                # desiredCapacity와 동일하게 설정
     
     # 1. 식별: 라벨(labels)을 통해 m7i 노드 그룹으로 타겟팅
     nodeSelector:
@@ -68,6 +68,15 @@ nodesets:
     extraConfMap:
       CPUs: "32"
       Features: "amx"
+
+# 이 부분이 추가되어야 sinfo에 보입니다!
+partitions:
+  - name: "amx-part"                 # sinfo에 표시될 파티션 이름
+    nodes: ["ns-amx"]                # 위에서 정의한 nodeset 이름과 일치해야 함
+    default: true                    # 기본 파티션으로 설정 (선택 사항)
+    extraConfMap:
+      MaxTime: "infinite"
+      State: "UP"
 EOF
 ```
 

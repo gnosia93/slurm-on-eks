@@ -181,7 +181,7 @@ managedNodeGroups:                           # 관리형 노드 그룹
       withAddonPolicies:
         ebs: true                     		 # EBS CSI 드라이버가 작동하기 위한 IAM 권한 부여
 
-  - name: ng-arm
+  - name: ng-amx
     instanceType: m7i.8xlarge
     minSize: 4
     maxSize: 4

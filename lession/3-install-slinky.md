@@ -18,7 +18,7 @@ Slurm Slinky 아키텍처를 구성하는 핵심 기술 요소는 etcd, 쿠버�
 * 완료 및 자원 반납: 작업이 종료되면 결과 데이터가 저장되고, 사용된 자원(특히 클라우드 자원)은 자동으로 회수되어 비용을 최적화한다.
 이러한 구조는 특히 수만 개의 GPU 코어를 동시에 사용하는 거대 모델 학습 환경에서 통신 지연을 최소화하는 데 효과적이다.
 
-### Slurm Slinky 설치하기 ###
+### [Slurm Slinky 설치하기](https://slinky.schedmd.com/projects/slurm-operator/en/release-1.0/installation.html) ###
 #### 1. cert-manager 설치 ####
 ```
 helm repo add jetstack https://charts.jetstack.io

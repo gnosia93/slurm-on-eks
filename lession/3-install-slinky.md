@@ -39,7 +39,6 @@ helm install slurm-operator oci://ghcr.io/slinkyproject/charts/slurm-operator \
 ```
 helm install slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --namespace=slurm --create-namespace
-  --set slurm.clusterName="${CLUSTER_NAME}"
 ```
 [결과]
 ```

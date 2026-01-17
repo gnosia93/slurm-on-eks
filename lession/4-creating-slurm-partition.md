@@ -42,7 +42,7 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 ```
 cat <<EOF > amx-partition-values.yaml
 nodesets:
-  amx-nodes:
+  slurmd:  # 노드셋 이름을 기본값인 slurmd로 설정하여 안정성 확보
     enabled: true
     replicas: 4
     nodeSelector:
@@ -53,47 +53,38 @@ nodesets:
         operator: "Equal"
         value: "slurm"
         effect: "NoSchedule"
+    # 아래 slurmd 하위 구조가 59라인 에러를 해결하는 핵심입니다.
     slurmd:
       image:
         repository: ghcr.io/slinkyproject/slurmd
         tag: 25.11-ubuntu24.04
-      # 템플릿이 참조하는 .path 키를 명시적으로 생성하여 Map 타입을 강제함
       logfile:
-        path: ""
-      # 다른 타입 에러 방지를 위해 container 하위 구조도 명시함
+        path: "/var/log/slurm/slurmd.log"
       container:
         resources: {}
         env: []
         args: []
+        port: 6818
 
 partitions:
   amx-partition:
     enabled: true
     nodesets:
-      - amx-nodes
+      - slurmd
     configMap:
       State: UP
       Default: "NO"
-      MaxTime: UNLIMITED  
+      MaxTime: UNLIMITED
 EOF
 ```
 
 --reuse-values 을 이용하여 기존에 설정된 다른 값들은 유지하고, YAML에 새롭게 명시된 파티션 설정만 적용한다.
 ```
 helm upgrade slurm oci://ghcr.io/slinkyproject/charts/slurm \
-  --namespace=slurm \
-  -f amx-partition-values.yaml \
-  --reuse-values
-```
-
-```
-helm upgrade slurm oci://ghcr.io/slinkyproject/charts/slurm \
-  --namespace=slurm \
-  --set slurm.telemetry.enabled=false \
-  --set prometheus.serviceMonitor.enabled=false \
-  --set metrics.enabled=false \
-  -f amx-partition-values.yaml \
-  --reuse-values
+  --namespace slurm \
+  --set slurm.clusterName="slurm_slurm" \
+  --reset-values \
+  -f amx-partition-values.yaml
 ```
 
 slurmctld 파드로 로그인하여 신규로 설정된 파티션을 확인하다.

@@ -37,7 +37,7 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 ]
 ```
 
-노드가 이미 생성되어 있으므로 Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려준다. 이때 파드 스팩에 Toleration 도 함께 설정해야 slurmd 파드가 대상 노드에 스케줄링 될 수 있다.  
+노드가 이미 생성되어 있으므로 Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려준다. 이때 파드 스팩에 Toleration 도 함께 설정해야 slurmd 파드가 대상 노드에 스케줄링 될 수 있다. slinky 에서 slurmd 가 설치되는 노드를 식별하기 위해서 nodeset > podSpec > nodeSelector 의 라벨 설정을 이용한다.  
 ```
 cat <<EOF > amx-nodeset.yaml
 # nodesets 아래에 바로 이름을 키로 사용합니다 (리스트 '-' 제거)

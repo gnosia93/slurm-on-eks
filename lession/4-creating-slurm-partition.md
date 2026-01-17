@@ -86,7 +86,7 @@ partitions:
 EOF
 ```
 
-helm show values <chart-name> 를 사용하면 차트가 제공하는 values 상세 스펙을 확인할 수 있다.
+helm show values <chart-name> 를 사용하면 차트가 제공하는 values 상세 스펙을 확인할 수 있다. values.yaml 을 수정할때 참고해서 작성해야 한다. 
 ```
 helm show values oci://ghcr.io/slinkyproject/charts/slurm
 ```

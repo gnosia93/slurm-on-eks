@@ -166,6 +166,7 @@ eksctl create iamserviceaccount \
   --region ${AWS_REGION} \
   --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEKS_EBS_CSI_Driver_Policy \
   --approve \
-  --role-name EBS_CSI_DriverRole-${CLUSTER_NAME}
+  --role-name EBS_CSI_DriverRole-${CLUSTER_NAME} \
+  --override-existing-serviceaccounts
 ```
 * 클라우드 포메이션 에러가 발생하였다. 콘솔에서 확인하고 재설치 해야 한다..

@@ -145,8 +145,33 @@ kubectl get sc
 [결과]
 ```
 NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-gp2             kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  20h
-gp3 (default)   ebs.csi.aws.com         Delete          WaitForFirstConsumer   true                   82s
+gp2             kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  101m
+gp3 (default)   ebs.csi.aws.com         Delete          WaitForFirstConsumer   true                   29m
+```
+slinky 파드들을 확인한다. 
+```
+kubectl get all -n slurm
+```
+[결과]
+```
+NAME                                 READY   STATUS    RESTARTS   AGE
+pod/slurm-controller-0               3/3     Running   0          3m31s
+pod/slurm-restapi-5468d6d478-bpszs   1/1     Running   0          3m31s
+pod/slurm-worker-slinky-0            2/2     Running   0          3m31s
+
+NAME                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/slurm-controller      ClusterIP   172.20.240.116   <none>        6817/TCP   3m31s
+service/slurm-restapi         ClusterIP   172.20.103.120   <none>        6820/TCP   3m31s
+service/slurm-workers-slurm   ClusterIP   None             <none>        6818/TCP   3m31s
+
+NAME                            READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/slurm-restapi   1/1     1            1           3m31s
+
+NAME                                       DESIRED   CURRENT   READY   AGE
+replicaset.apps/slurm-restapi-5468d6d478   1         1         1       3m31s
+
+NAME                                READY   AGE
+statefulset.apps/slurm-controller   1/1     3m31s
 ```
 
 ## 레퍼런스 ##

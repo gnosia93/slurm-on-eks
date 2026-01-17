@@ -20,6 +20,7 @@ Slurm Slinky 아키텍처를 구성하는 핵심 기술 요소는 etcd, 쿠버�
 
 ### [Slurm Slinky 설치하기](https://slinky.schedmd.com/projects/slurm-operator/en/release-1.0/installation.html) ###
 #### 1. cert-manager 설치 ####
+Slurm-Operator가 제대로 동작하기 위해서는 쿠버네티스와 안전한 대화(Webhook)를 나눠야 하는데, 이때 필요한 SSL/TLS 인증서를 자동으로 만들어주고 관리해 주는 도구이다.
 ```
 helm repo add jetstack https://charts.jetstack.io
 helm repo update

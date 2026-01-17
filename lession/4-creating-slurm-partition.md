@@ -22,8 +22,7 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 }
 ```
 
-노드가 이미 떠 있으므로, Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려줍니다.
-
+노드가 이미 생성되어 있으므로 Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려준다.
 ```
 cat <<EOF > static-partition-values.yaml
 clusters:

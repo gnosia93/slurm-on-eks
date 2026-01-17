@@ -41,35 +41,31 @@ aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
 파티션 설정에 Toleration이 포함되는 이유는 "해당 파티션으로 제출된 모든 작업(Pod)에 이 출입증을 자동으로 달아주기 위함" 이다. 
 ```
 cat <<EOF > amx-partition-values.yaml
+# amx-partition-values.yaml
 nodesets:
-  amx-nodes:                   # 노드셋 이름 정의
-    enabled: true              # 명시적으로 활성화
+  amx-nodes:
+    enabled: true
     replicas: 4
-    # 노드 선택기 (라벨 기반)
     nodeSelector:
       workload-type: slurm-compute
       architecture: amx-enabled
-    # 테인트 허용 (자물쇠 열기)
     tolerations:
       - key: "workload"
         operator: "Equal"
         value: "slurm"
         effect: "NoSchedule"
-    # 컨테이너 설정 (생략 가능, 기본값 사용 시)
     slurmd:
-        logfile: 
-        # path가 비어있으면 기본 경로(/var/log/slurm/slurmd.log)를 사용한다.
-        path: "" 
+      logfile:
+        path: ""
       image:
         repository: ghcr.io/slinkyproject/slurmd
         tag: 25.11-ubuntu24.04
 
-# 2. 파티션 설정: 위에서 만든 노드셋을 파티션에 연결한다.
 partitions:
   amx-partition:
     enabled: true
     nodesets:
-      - amx-nodes  # 위에서 정의한 nodeset 이름을 지정
+      - amx-nodes
     configMap:
       State: UP
       Default: "NO"

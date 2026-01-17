@@ -357,11 +357,4 @@ eksctl delete cluster -f cluster.yaml
 ## 레퍼런스 ##
 * https://docs.aws.amazon.com/ko_kr/ec2/latest/instancetypes/ec2-instance-regions.html
 
-### todo ###
-* ec2nodeclass 설정을 아래 값으로  변경..
-```
-securityGroupSelectorTerms:
-    - tags:
-        alpha.eksctl.io/cluster-name: "slurm-on-eks" # SG 수동 태깅 대신 사용
-```
-eksctl이 클러스터를 만들 때 자동으로 태깅해 줍니다.
+

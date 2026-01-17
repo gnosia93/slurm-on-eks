@@ -6,44 +6,41 @@ Slurm에서 파티션(Partition)은 여러 대의 컴퓨팅 노드를 논리적�
 * 사용자 권한 (AllowGroups): 특정 파티션을 사용할 수 있는 사용자 그룹을 제한하여 보안이나 우선순위를 관리할 수 있다.
 * 우선순위 (Priority): 여러 파티션이 동일한 노드를 공유할 때, 어떤 파티션의 작업을 먼저 실행할지 결정한다. 
 
-### 1. 정적 노드 프로비저닝 ###
-1. 노드그룹 생성
+### 1. 정적 파티션 생성 ###
+ng-amx 매니지드 노드 그룹의 라벨을 확인한다.
 ```
-managedNodeGroups:
-  - name: static-p4dn-group
-    instanceType: p4dn.24xlarge
-    minSize: 2
-    maxSize: 2
-    desiredCapacity: 2 # 2대 상시 유지
-    volumeSize: 500
-    efaEnabled: true   # p4dn의 핵심 기능
-    labels:
-      role: slurm-static-gpu # Slinky가 찾을 수 있게 라벨 부여
-    taints:
-      - key: "slinky.io/usage"
-        value: "gpu-task"
-        effect: "NoSchedule"
-
+aws eks describe-nodegroup --cluster-name ${CLUSTER_NAME} \
+  --nodegroup-name ng-amx --query 'nodegroup.labels' --output text 
+```
+[결과]
+```
+{
+    "alpha.eksctl.io/cluster-name": "slurm-on-eks",
+    "alpha.eksctl.io/nodegroup-name": "ng-amx",
+    "workload-type": "slurm-compute",
+    "architecture": "amx-enabled"
+}
 ```
 
-2. Slinky Helm values.yaml 연결
 노드가 이미 떠 있으므로, Slinky에게 "동적으로 띄우지 말고, 이 라벨이 붙은 노드를 파티션으로 써라"고 알려줍니다.
 
 ```
-yaml
+cat <<EOF > static-partition-values.yaml
 clusters:
   - name: "slinky-cluster"
     partitions:
-      - name: "static-gpu-partition"
+      - name: "static-amx-partition"
         # 중요: Karpenter 설정 대신 고정된 노드 선택기 사용
         nodeSelector:
-          role: slurm-static-gpu
+          - workload-type: slurm-compute
+          - architecture: amx-enabled
         tolerations:
           - key: "slinky.io/usage"
             operator: "Equal"
             value: "gpu-task"
             effect: "NoSchedule"
         gres: "gpu:8"
+EOF
 ```
 
 

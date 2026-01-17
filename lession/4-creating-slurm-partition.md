@@ -153,30 +153,11 @@ PartitionName=amx
 
 ### 2. NVIDIA GPU 파티션 생성 (Karpenter) ###
 
+#### 카펜터 노드풀 생성 ####
 
 
+* 동작 원리: sbatch 제출 → Slinky가 Pod 생성 → Pod에 slurm-job 관련 Toleration 부여 → 카펜터가 이를 보고 일치하는 NodePool에서 p4dn 실행.
 
-Slinky는 Slurm의 작업 요청을 Kubernetes의 Pod 요청으로 변환하고, 이때 Karpenter(카펜터)가 이 Pod을 보고 "p4dn 2대가 필요하네?"라며 AWS EC2를 즉시 생성하여 클러스터에 붙인다.
-sinfo에서 확인했을 때 파티션 상태가 idle 혹은 cloud로 보일 수 있는데, 이는 노드가 현재는 없지만, 작업 제출 시 자동으로 생성된다는 뜻이다.
-GPU 파티션 설정 시 AWS EFA(Elastic Fabric Adapter) 활성화 옵션이 파티션 정의에 포함되어 있는지 꼭 확인해야 한다.
-
-
-* 카펜터 설치
-* 노드풀 설정
-
-* 3. Slinky와의 연결 (Taint & Toleration)
-이게 가장 중요합니다! Slurm 작업이 들어왔을 때 카펜터가 "아, 이건 Slurm용 노드구나"라고 알 수 있도록 Taint(용인) 설정을 맞춰야 합니다.
-Slurm 파티션 설정: Helm values.yaml의 partitions 섹션에 해당 노드풀의 레이블이나 Taint를 기입합니다.
-동작 원리: sbatch 제출 → Slinky가 Pod 생성 → Pod에 slurm-job 관련 Toleration 부여 → 카펜터가 이를 보고 일치하는 NodePool에서 p4dn 실행.
-
-* 4. 주의사항 (Scale-down)
-Time-to-Live (TTL): 작업이 끝나고 노드가 즉시 삭제되길 원한다면 카펜터 설정에서 disruption.consolidationPolicy: WhenEmpty를 설정하세요. Karpenter 정지 설정 가이드에서 상세 내용을 볼 수 있습니다.
-결론적으로, 카펜터 설치 + 노드풀 설정 + Slinky 파티션 레이블 매칭 이 3박자가 맞으면 자동으로 p4dn이 생겼다 사라졌다 하는 동적 환경이 완성됩니다.
-현재 노드풀 YAML을 직접 작성 중이신가요? 아니면 기존에 설치된 카펜터에 p4dn만 추가하려 하시나요? Spot 인스턴스 사용 여부를 알려주시면 비용 최적화 옵션도 덧붙여 드릴 수 있습니다.
-
-
-* Slinky 환경에서 Slurm 파티션과 Karpenter 노드풀을 연결하는 핵심은 "이 파티션에 제출된 작업은 반드시 이 노드(Karpenter가 띄운 노드) 위에서만 실행되어야 한다"는 제약 조건을 거는 것입니다.
-* Slinky Helm Chart 가이드와 일반적인 Slurm-on-K8s 구조에 따르면, values.yaml에 아래와 같이 nodeSelector와 tolerations를 명시해야 합니다.
 
 [values.yaml]
 ```
@@ -200,48 +181,7 @@ clusters:
 
 ```
 
-```
-apiVersion: karpenter.sh/v1beta1
-kind: NodePool
-metadata:
-  name: slurm-gpu-pool
-spec:
-  template:
-    spec:
-      requirements:
-        - key: "node.kubernetes.io/instance-type"
-          operator: In
-          values: ["p4dn.24xlarge"]
-        - key: "karpenter.sh/capacity-type"
-          operator: In
-          values: ["on-demand"] # 또는 spot
-      nodeClassRef:
-        name: slurm-gpu-nodeclass
----
-apiVersion: karpenter.aws/v1beta1
-kind: EC2NodeClass
-metadata:
-  name: slurm-gpu-nodeclass
-spec:
-  amiFamily: AL2 # 또는 Bottlerocket
-  subnetSelectorTerms:
-    - tags: { "karpenter.sh/discovery": "my-cluster" }
-  securityGroupSelectorTerms:
-    - tags: { "karpenter.sh/discovery": "my-cluster" }
-  # p4dn을 위한 EFA 설정은 AMI 내부에 구성되거나 UserData로 처리
-```
 
-
-### 3. 파티션 확인하기 ###
-```
-scontrol show config | grep ClusterName
-scontrol show partition gpu-partition
-```
-
-🚀 다음 액션 제안 :
-
-* Slinky 환경은 Node Selector나 Toleration 같은 쿠버네티스 개념이 Slurm 파티션과 연결되어 작동한다. 
-* 혹시 현재 새로운 인스턴스 타입을 추가하려 하시나요, 아니면 기존 파티션의 타임아웃(Timeout) 설정을 변경하려 하시나요? 
 
 
 ## GRES / TRES ##
@@ -259,12 +199,8 @@ AWS 비용 최적화를 위해 "특정 사용자가 GPU(TRES)를 100시간 이�
 
 
 ## 참고 ##
-* slurm 차트 value 확인
-```
-helm show values oci://ghcr.io/slinkyproject/charts/slurm | grep -A 50 "partitions"
-```
 
-* 차트 내려 받기
+#### 차트 내려 받기 ####
 ```
 # 1. 차트 파일을 현재 디렉토리에 내려받기
 helm pull oci://ghcr.io/slinkyproject/charts/slurm --version 1.0.1

@@ -34,7 +34,8 @@ helm install aws-efa-k8s-device-plugin eks/aws-efa-k8s-device-plugin --namespace
 kubectl patch ds aws-efa-k8s-device-plugin -n kube-system --type='json' -p='[
   {"op": "add", "path": "/spec/template/spec/tolerations/-", "value": {"operator": "Exists"}}
 ]'
-
+```
+```
 kubectl get ds aws-efa-k8s-device-plugin -n kube-system
 ```
 [결과]

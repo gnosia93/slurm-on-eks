@@ -86,6 +86,12 @@ partitions:
 EOF
 ```
 
+helm show values <chart-name> 를 사용하면 차트가 제공하는 values 상세 스펙을 확인할 수 있다.
+```
+helm show values oci://ghcr.io/slinkyproject/charts/slurm
+```
+
+helm 차트를 업데이트 한다. 
 ```
 helm upgrade --install slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --namespace=slurm -f amx-nodeset.yaml

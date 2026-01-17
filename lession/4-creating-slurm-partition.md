@@ -44,15 +44,15 @@ cat <<EOF > amx-nodeset.yaml
 nodesets:
   ns-amx:
     enabled: true
-    replicas: 4                          # count 대신 replicas를 사용 (Slinky 1.0.1 규격)
+    replicas: 4                            # count 대신 replicas를 사용 (Slinky 1.0.1 규격)
     updateStrategy:
       type: RollingUpdate
     podSpec:                   
-      nodeSelector:                      # node selector 를 이용하여 slurmd 가 설치될 노드를 식별한다.
+      nodeSelector:                        # node selector 를 이용하여 slurmd 가 설치될 노드를 식별한다.
         workload-type: "slurm-compute"
         architecture: "amx-enabled"
-      tolerations:            
-        - key: "workload"
+      tolerations:                         # 노드그룹에 설정된 taint 를 무력화 시키기 위해서 설정
+        - key: "workload"                  # slurmd 파드가 스케줄링 되면서 자동으로 이 toleration 이 slurmd 파드에 붙는다. 
           operator: "Equal"
           value: "slurm"
           effect: "NoSchedule"

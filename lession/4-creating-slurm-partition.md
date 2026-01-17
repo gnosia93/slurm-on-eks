@@ -84,6 +84,8 @@ scontrol show partition gpu-partition
 아래 명령어로 로그를 확인한다. 
 ```
 kubectl logs -n slinky -l app.kubernetes.io/name=slurm-operator
+scontrol show config | grep ClusterName
+ClusterName             = slurm_slurm
 ```
 
 ### 2. 동적 프로비저닝 ###

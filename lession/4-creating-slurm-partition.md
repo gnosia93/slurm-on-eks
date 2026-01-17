@@ -98,22 +98,32 @@ helm upgrade --install slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --namespace=slurm -f amx-nodeset.yaml
 ```
 
-오퍼레이터 로그를 확인한다.
+오퍼레이터 로그에 오류가 없는지 확인한다.
 ```
 kubectl logs -n slinky deployment/slurm-operator
 ```
-
-slurmctld 파드로 로그인하여 신규로 설정된 파티션을 확인하다.
+slurmctld 파드로 로그인하여 신규로 추가된 파티션을 확인하다.
 ```
 kubectl exec -it slurm-controller-0 -n slurm -c slurmctld -- /bin/bash
 slurm@slurm-controller-0:/tmp$ sinfo
-scontrol show partition gpu-partition
+slurm@slurm-controller-0:/tmp$ scontrol show partition amx
 ```
-아래 명령어로 로그를 확인한다. 
+[결과]
 ```
-kubectl logs -n slinky -l app.kubernetes.io/name=slurm-operator
-scontrol show config | grep ClusterName
-ClusterName             = slurm_slurm
+slurm@slurm-controller-0:/tmp$ scontrol show partition amx
+PartitionName=amx
+   AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL
+   AllocNodes=ALL Default=YES QoS=N/A
+   DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO
+   MaxNodes=UNLIMITED MaxTime=UNLIMITED MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED
+   NodeSets=ns-amx
+   Nodes=(null)
+   PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO
+   OverTimeLimit=NONE PreemptMode=OFF
+   State=UP TotalCPUs=0 TotalNodes=0 SelectTypeParameters=NONE
+   JobDefaults=(null)
+   DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED
+   TRES=(null)
 ```
 
 ### 2. 동적 프로비저닝 ###

@@ -81,8 +81,8 @@ EOF
 ```
 
 ```
-helm upgrade --install slurm-operator oci://ghcr.io/slinkyproject/charts/slurm-operator \
-  --namespace=slinky -f amx-nodeset.yaml
+helm upgrade --install slurm oci://ghcr.io/slinkyproject/charts/slurm \
+  --namespace=slurm -f amx-nodeset.yaml
 ```
 
 오퍼레이터 로그를 확인한다.

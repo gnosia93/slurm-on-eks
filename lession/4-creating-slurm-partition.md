@@ -44,6 +44,7 @@ cat <<EOF > amx-nodeset.yaml
 # nodesets 아래에 바로 이름을 키로 사용합니다 (리스트 '-' 제거)
 nodesets:
   ns-amx:
+    enabled: true
     replicas: 4                # count 대신 replicas를 사용 (Slinky 1.0.1 규격)
     nodeSelector:
       workload-type: "slurm-compute"
@@ -64,11 +65,12 @@ nodesets:
 
 # partitions 하위는 리스트 형식을 유지하되, nodes 이름이 위와 정확히 일치해야 함
 partitions:
-  - name: "amx-part"
-    nodes: 
+  amx:
+    enabled: true
+    nodesets: 
       - "ns-amx"
-    default: true
-    extraConfMap:
+    configMap:
+      Default: "YES"
       MaxTime: "infinite"
       State: "UP"
 EOF

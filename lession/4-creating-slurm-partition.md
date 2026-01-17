@@ -62,6 +62,11 @@ nodesets:
         limits:
           cpu: "30"
           memory: "120Gi"
+    # LogFile sidecar configurations.
+    logfile:
+      image:
+        repository: docker.io/library/alpine
+        tag: latest
     extraConfMap:
       CPUs: "32"
       Features: "amx"

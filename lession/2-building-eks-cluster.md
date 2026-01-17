@@ -214,7 +214,21 @@ eksctl create cluster -f cluster.yaml
 
 [결과]
 ```
-...
+2026-01-17 07:23:35 [ℹ]  eksctl version 0.221.0
+2026-01-17 07:23:35 [ℹ]  using region ap-northeast-2
+2026-01-17 07:23:35 [✔]  using existing VPC (vpc-0fda854a281c4693e) and subnets (private:map[ap-northeast-2a:{subnet-0c73c17db8ed13d1b ap-northeast-2a 10.0.10.0/24 0 } ap-northeast-2b:{subnet-0ac8189839f1dfd67 ap-northeast-2b 10.0.11.0/24 0 } ap-northeast-2c:{subnet-032de9fe98da7fdbb ap-northeast-2c 10.0.12.0/24 0 } ap-northeast-2d:{subnet-0fec677af847b90a2 ap-northeast-2d 10.0.13.0/24 0 }] public:map[])
+2026-01-17 07:23:35 [!]  custom VPC/subnets will be used; if resulting cluster doesn't function as expected, make sure to review the configuration of VPC/subnets
+2026-01-17 07:23:35 [ℹ]  nodegroup "ng-arm" will use "" [AmazonLinux2023/1.34]
+2026-01-17 07:23:35 [ℹ]  nodegroup "ng-amx" will use "" [AmazonLinux2023/1.34]
+2026-01-17 07:23:35 [!]  Auto Mode will be enabled by default in an upcoming release of eksctl. This means managed node groups and managed networking add-ons will no longer be created by default. To maintain current behavior, explicitly set 'autoModeConfig.enabled: false' in your cluster configuration. Learn more: https://eksctl.io/usage/auto-mode/
+2026-01-17 07:23:35 [ℹ]  using Kubernetes version 1.34
+2026-01-17 07:23:35 [ℹ]  creating EKS cluster "slurm-on-eks" in "ap-northeast-2" region with managed nodes
+2026-01-17 07:23:35 [ℹ]  2 nodegroups (ng-amx, ng-arm) were included (based on the include/exclude rules)
+2026-01-17 07:23:35 [ℹ]  will create a CloudFormation stack for cluster itself and 2 managed nodegroup stack(s)
+2026-01-17 07:23:35 [ℹ]  if you encounter any issues, check CloudFormation console or try 'eksctl utils describe-stacks --region=ap-northeast-2 --cluster=slurm-on-eks'
+2026-01-17 07:23:35 [ℹ]  Kubernetes API endpoint access will use default of {publicAccess=true, privateAccess=false} for cluster "slurm-on-eks" in "ap-northeast-2"
+2026-01-17 07:23:35 [ℹ]  CloudWatch logging will not be enabled for cluster "slurm-on-eks" in "ap-northeast-2"
+2026-01-17 07:23:35 [ℹ]  you can enable it with 'eksctl utils update-cluster-logging --enable-types={SPECIFY-YOUR-LOG-TYPES-HERE (e.g. all)} --region=ap-northeast-2 --cluster=slurm-on-eks'
 ...
 ```
 

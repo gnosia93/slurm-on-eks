@@ -120,6 +120,16 @@ slurmctld 파드로 로그인하여 신규로 추가된 파티션을 확인하�
 ```
 kubectl exec -it slurm-controller-0 -n slurm -c slurmctld -- /bin/bash
 slurm@slurm-controller-0:/tmp$ sinfo
+```
+[결과]
+```
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+slinky       up   infinite      1   idle slinky-0
+all          up   infinite      5   idle ns-amx-[0-3],slinky-0
+amx*         up   infinite      4   idle ns-amx-[0-3]
+```
+amx 파티션의 상세 정보를 확인한다. 
+```
 slurm@slurm-controller-0:/tmp$ scontrol show partition amx
 ```
 [결과]
@@ -131,13 +141,13 @@ PartitionName=amx
    DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=0 Hidden=NO
    MaxNodes=UNLIMITED MaxTime=UNLIMITED MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED
    NodeSets=ns-amx
-   Nodes=(null)
+   Nodes=ns-amx-[0-3]
    PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=NO
    OverTimeLimit=NONE PreemptMode=OFF
-   State=UP TotalCPUs=0 TotalNodes=0 SelectTypeParameters=NONE
+   State=UP TotalCPUs=128 TotalNodes=4 SelectTypeParameters=NONE
    JobDefaults=(null)
    DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED
-   TRES=(null)
+   TRES=cpu=128,mem=507024M,node=4,billing=128
 ```
 
 ### 2. 동적 프로비저닝 ###

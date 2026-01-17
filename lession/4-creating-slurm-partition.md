@@ -65,6 +65,15 @@ helm upgrade slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --reuse-values
 ```
 
+```
+helm upgrade slurm oci://ghcr.io/slinkyproject/charts/slurm \
+  --namespace=slurm \
+  --set metrics.enabled=false \
+  --set prometheus.serviceMonitor.enabled=false \
+  -f amx-partition-values.yaml \
+  --reuse-values
+```
+
 slurmctld 파드로 로그인하여 신규로 설정된 파티션을 확인하다.
 ```
 kubectl exec -it slurm-controller-0 -n slurm -c slurmctld -- /bin/bash

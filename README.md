@@ -15,7 +15,7 @@
 
 * [C3. slinky 설치하기](https://github.com/gnosia93/slurm-on-k8s/blob/main/lession/3-install-slinky.md)
 
-* [C4. 작업 파티션(큐) 생성하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/4-creating-slurm-partition.md)
+* [C4. 파티션(큐) 할당하기](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/4-creating-slurm-partition.md)
 
 * [C5. slurm 명령어 살펴보기](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/5-slurm-command.md)
 

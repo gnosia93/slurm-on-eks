@@ -157,10 +157,10 @@ PartitionName=amx
 
 * [디바이스 플러그인을 설치 및 카펜터 GPU 노드풀 생성](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/4-prerequisite.md)
 
-* [Nodeset 오브젝트를 오토스케일링 하기 위해서는 KEDA 를 설치](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/4-keda-based-autoscaling.md)
+* [Nodeset 오토스케일링을 위한 KEDA 설치](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/4-keda-based-autoscaling.md)
 
 #### GPU 파티션 생성하기 ####
-
+slinky 에서는 nodeset 오브젝트를 이용하여 slurm 의 파티션을 구현한다.  
 ```
 cat <<EOF > gpu-nodeset.yaml
 nodesets:

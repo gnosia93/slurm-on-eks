@@ -6,6 +6,8 @@ Slurm에서 파티션(Partition)은 여러 대의 컴퓨팅 노드를 논리적�
 * 사용자 권한 (AllowGroups): 특정 파티션을 사용할 수 있는 사용자 그룹을 제한하여 보안이나 우선순위를 관리할 수 있다.
 * 우선순위 (Priority): 여러 파티션이 동일한 노드를 공유할 때, 어떤 파티션의 작업을 먼저 실행할지 결정한다. 
 
+Slinky 에서는 파티션(Partition) 핸들링을 위해 신규 오브젝트인 Nodeset 오브젝트를 사용한다. 
+
 ### 1. AMEX CPU 파티션 생성 ###
 eks 매니지드 노드 그룹 ng-amx 를 구성하는 4대의 m7i.8xlarge 인스턴스를 활용하여 AMEX CPU 파티션 생성할 예정이다. 라벨 정보가 필요하므로 라벨 부터 확인한다. 
 ```
@@ -160,7 +162,6 @@ PartitionName=amx
 * [Nodeset 오토스케일링을 위한 KEDA 설치](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/4-keda-based-autoscaling.md)
 
 #### GPU 파티션 생성하기 ####
-slinky 에서는 nodeset 오브젝트를 이용하여 slurm 의 파티션을 구현한다.  
 ```
 cat <<EOF > gpu-nodeset.yaml
 nodesets:

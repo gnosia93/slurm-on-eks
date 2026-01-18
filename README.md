@@ -27,3 +27,6 @@
 * [C8. 데이터 전처리와 체크포인팅](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/8-preprocessing-chekpointing.md)
 
 
+### _Revison History_ ###
+
+* _2026-01-18 Draft Version Uploaded_

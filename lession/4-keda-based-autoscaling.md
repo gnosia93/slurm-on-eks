@@ -44,25 +44,33 @@ kubectl get apiservice -l app.kubernetes.io/instance=keda
 
 ### KEDA ScaleObject 생성 ###
 ```
+export PROMETHEUS_URL=$(..)
+```
+```
+cat <<EOF > keda-scaleobject.yaml
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: scale-gpu
 spec:
-  scaleTargetRef:
-    apiVersion: slinky.slurm.net/v1beta1
+  scaleTargetRef:                                
+    apiVersion: slinky.slurm.net/v1beta1        # KEDA 스케일링의 대상을 NodeSet 으로 설정
     kind: NodeSet
-    name: slurm-worker-gpu
+    name: slurm-worker-ns-gpu
   idleReplicaCount: 0
-  minReplicaCount: 1
-  maxReplicaCount: 10
+  minReplicaCount: 0                            # 최소 0 
+  maxReplicaCount: 1000                         # 최대 1000 - 인스턴스 1000대 까지 오토 스케일링.  
   triggers:
     - type: prometheus
       metricType: Value
       metadata:
-        serverAddress: http://prometheus-kube-prometheus-prometheus.prometheus:9090
-        query: slurm_partition_jobs_pending{partition="radar"}
-        threshold: '5'
+        serverAddress: ${PROMETHEUS_URL}                # http://prometheus-kube-prometheus-prometheus.prometheus:9090
+        query: slurm_partition_jobs_pending{partition="gpu"}
+        threshold: '1'                          # 이 값을 0 으로 잡아야 할지? 1로 잡아야 할지? 
+EOF
 ```
-<< 위의 내용 수정해야 한다 >>
+```
+kubectl apply -f keda-scaleobject.yaml
+```
+
 

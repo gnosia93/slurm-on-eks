@@ -210,14 +210,47 @@ replicaset.apps/slurm-operator-webhook-57cf4d6d85   1         1         1       
 * Karpenter 출동: Karpenter가 이 Pending 파드를 발견하고, "아, 파드가 필요로 하는 리소스(CPU/GPU 등)에 맞는 실제 노드를 프로비저닝해야겠군!" 하며 인스턴스를 띄웁니다.
 노드가 준비되면 파드가 배치되고, Slurm Worker가 활성화되어 작업을 수행합니다.
 
->> KEDA 가 핵심 컴포넌트이다...
+프로메테우스를 설치한다. 
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --set 'installCRDs=true' \
+  --namespace prometheus --create-namespace
+```
+KEDA 를 설치한다.
+```
+helm repo add kedacore https://kedacore.github.io/charts
+helm repo update
+helm install keda kedacore/keda \
+  --namespace keda --create-namespace
+```
+slurm 을 업그레이드 한다. 
+```
+helm update --install slurm oci://ghcr.io/slinkyproject/charts/slurm \
+  --set 'controller.metrics.enabled=true' \
+  --set 'controller.metrics.serviceMonitor.enabled=true' \
+  --namespace slurm --create-namespace
+```
+
+KEDA api 서비스를 확인한다. 
+```
+kubectl get apiservice -l app.kubernetes.io/instance=keda
+```
+[결과]
+```
+...
+```
 
 
 ## 레퍼런스 ##
 * https://github.com/SlinkyProject/slurm-operator
 * https://aws.amazon.com/ko/blogs/containers/running-slurm-on-amazon-eks-with-slinky/
 * https://slinky.schedmd.com/projects/slurm-operator/en/release-1.0/usage/autoscaling.html
+* https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource
 
+
+  
 ### todo ###
 아래 IAM 이 필요한지 나중에 테스트.
 IAM 역할 생성 및 AWS 정책 연결 (EKS 전용 서비스 계정 생성) 한다.

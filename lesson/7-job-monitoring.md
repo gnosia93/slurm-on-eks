@@ -1,5 +1,5 @@
 * 핵심 내용: squeue 같은 전통적인 명령어와 Prometheus/Grafana를 활용한 현대적 대시보드의 조화.
-* 실습 포인트: 설치하신 ServiceMonitor를 통해 Slurm의 메트릭이 시각화되는 과정을 확인.
+* 실습 포인트: ServiceMonitor를 통해 Slurm의 메트릭이 시각화되는 과정을 확인.
 
 ### 성능 확인 방법 ###
 

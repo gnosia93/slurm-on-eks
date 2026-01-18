@@ -25,11 +25,12 @@ helm repo update
 helm install keda kedacore/keda \
   --namespace keda --create-namespace
 ```
-slurm 을 업그레이드 한다. 
+slurm 을 업그레이드 한다. --reuse-values 을 사용하여 기존 사용자 설정을 유지한다. 
 ```
 helm update --install slurm oci://ghcr.io/slinkyproject/charts/slurm \
   --set 'controller.metrics.enabled=true' \
   --set 'controller.metrics.serviceMonitor.enabled=true' \
+  --reuse-values \
   --namespace slurm --create-namespace
 ```
 

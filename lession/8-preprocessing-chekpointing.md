@@ -17,3 +17,12 @@ OUTPUT_DIR="/data/processed/shard_${SLURM_ARRAY_TASK_ID}"
 # 토크나이징 스크립트 실행 (예: HuggingFace Tokenizers)
 python tokenize_script.py --input $INPUT_FILE --output $OUTPUT_DIR --format webdataset
 ```
+
+
+
+### FSx for Lustre 최적화 팁 (Striping) ###
+대용량 WebDataset 파일을 생성할 때, Lustre의 Striping 설정을 통해 파일 하나를 여러 서버에 분산 저장하면 학습 시 읽기 속도가 수 배 빨라진다. 
+```
+# 결과 폴더에 스트라이핑 설정 (파일을 8개의 저장소에 분산)
+lfs setstripe -c 8 /data/processed
+```

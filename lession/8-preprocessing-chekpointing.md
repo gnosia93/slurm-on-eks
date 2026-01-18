@@ -26,3 +26,6 @@ python tokenize_script.py --input $INPUT_FILE --output $OUTPUT_DIR --format webd
 # 결과 폴더에 스트라이핑 설정 (파일을 8개의 저장소에 분산)
 lfs setstripe -c 8 /data/processed
 ```
+
+### S3로 최종 결과물 백업 (Export) ###
+전처리가 완료된 WebDataset은 다시 S3로 영구 저장해야 합니다. AWS 데이터 리포지토리 연동(DRA) 기능을 사용하면 FSx에서 생성된 파일을 즉시 S3 버킷으로 밀어 넣을 수 있다.

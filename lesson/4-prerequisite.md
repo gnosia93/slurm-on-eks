@@ -241,4 +241,4 @@ provider: efa
 
 ### 노드 확인 하기 ###
 eks-node-viewer 로 eks 의 노드를 쉽게 확인할 수 있다. 
-![](https://github.com/gnosia93/slurm-on-eks/blob/main/lession/images/eks-node-viewer.png)
+![](https://github.com/gnosia93/slurm-on-eks/blob/main/image/eks-node-viewer.png)

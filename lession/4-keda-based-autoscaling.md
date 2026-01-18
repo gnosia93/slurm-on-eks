@@ -17,7 +17,53 @@ helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack \
   --set 'installCRDs=true' \
   --namespace prometheus --create-namespace
+
+kubectl get all -n monitoring
 ```
+[결과]
+```
+NAME                                                         READY   STATUS    RESTARTS   AGE
+pod/alertmanager-prometheus-kube-prometheus-alertmanager-0   2/2     Running   0          15h
+pod/prometheus-grafana-5d49b89749-zhs5k                      3/3     Running   0          15h
+pod/prometheus-kube-prometheus-operator-55dfb9bbbc-vdrqr     1/1     Running   0          15h
+pod/prometheus-kube-state-metrics-857895cb8d-wmscq           1/1     Running   0          15h
+pod/prometheus-prometheus-kube-prometheus-prometheus-0       2/2     Running   0          15h
+pod/prometheus-prometheus-node-exporter-4kpps                1/1     Running   0          15h
+pod/prometheus-prometheus-node-exporter-crv7w                1/1     Running   0          15h
+pod/prometheus-prometheus-node-exporter-fth5d                1/1     Running   0          15h
+pod/prometheus-prometheus-node-exporter-kzxrw                1/1     Running   0          15h
+pod/prometheus-prometheus-node-exporter-wjx4k                1/1     Running   0          15h
+pod/prometheus-prometheus-node-exporter-xsmz2                1/1     Running   0          15h
+
+NAME                                              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+service/alertmanager-operated                     ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP   15h
+service/prometheus-grafana                        ClusterIP   172.20.251.150   <none>        80/TCP                       15h
+service/prometheus-kube-prometheus-alertmanager   ClusterIP   172.20.234.31    <none>        9093/TCP,8080/TCP            15h
+service/prometheus-kube-prometheus-operator       ClusterIP   172.20.59.144    <none>        443/TCP                      15h
+service/prometheus-kube-prometheus-prometheus     ClusterIP   172.20.36.175    <none>        9090/TCP,8080/TCP            15h
+service/prometheus-kube-state-metrics             ClusterIP   172.20.219.176   <none>        8080/TCP                     15h
+service/prometheus-operated                       ClusterIP   None             <none>        9090/TCP                     15h
+service/prometheus-prometheus-node-exporter       ClusterIP   172.20.169.242   <none>        9100/TCP                     15h
+
+NAME                                                 DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+daemonset.apps/prometheus-prometheus-node-exporter   6         6         6       6            6           kubernetes.io/os=linux   15h
+
+NAME                                                  READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/prometheus-grafana                    1/1     1            1           15h
+deployment.apps/prometheus-kube-prometheus-operator   1/1     1            1           15h
+deployment.apps/prometheus-kube-state-metrics         1/1     1            1           15h
+
+NAME                                                             DESIRED   CURRENT   READY   AGE
+replicaset.apps/prometheus-grafana-5d49b89749                    1         1         1       15h
+replicaset.apps/prometheus-kube-prometheus-operator-55dfb9bbbc   1         1         1       15h
+replicaset.apps/prometheus-kube-state-metrics-857895cb8d         1         1         1       15h
+
+NAME                                                                    READY   AGE
+statefulset.apps/alertmanager-prometheus-kube-prometheus-alertmanager   1/1     15h
+statefulset.apps/prometheus-prometheus-kube-prometheus-prometheus       1/1     15h
+```
+
+
 KEDA 를 설치한다.
 ```
 helm repo add kedacore https://kedacore.github.io/charts

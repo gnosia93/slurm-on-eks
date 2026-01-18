@@ -1,3 +1,5 @@
+## 데이터 전처리 ##
+
 * Raw 데이터를 FSx 위에서 병렬로 읽어 토크나이징(Tokenizing)하거나 TFRecord/WebDataset 형태로 변환한 뒤, 동일한 FSx 경로에 저장.
 * 성능 팁: Lustre 스트라이핑(Striping) 설정을 통해 대용량 파일을 여러 객체 저장소에 분산 저장하면 대규모 GPU 학습 시 읽기 성능이 극대화.
 
@@ -160,3 +162,6 @@ FSx for Lustre 활용 시 핵심 성능 포인트
 * split_by_node & split_by_worker: 멀티 GPU 학습(DDP/DeepSpeed) 시, WebDataset의 분산 처리 기능을 사용해야 각 GPU가 서로 다른 데이터를 읽어 중복 학습을 방지합니다.
 * num_workers 최적화: FSx for Lustre는 병렬 읽기에 강하므로 num_workers를 4~8 정도로 설정하여 I/O 대역폭을 최대한 활용하세요. AWS FSx Lustre 성능 가이드에 따르면 병렬 요청이 많을수록 처리량이 증가합니다.
 * Local Caching 방지: WebDataset은 메모리에 데이터를 쌓지 않고 바로 GPU로 넘기기 때문에, 수백 GB의 데이터셋도 FSx의 고속 네트워크망(최대 수백 Gbps)을 통해 병목 없이 학습할 수 있습니다.
+
+
+## 체크 포인팅 ##

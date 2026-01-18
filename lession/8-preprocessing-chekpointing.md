@@ -52,13 +52,6 @@ if __name__ == "__main__":
     main()
 ```
 
-* Job Array(--array)
-  독립적인 작업의 갯수를 설정하는 것으로 slurm 스케줄링의 대상이다. Array ID($SLURM_ARRAY_TASK_ID)는 서로 완전히 독립적인 프로세스로 하나가 죽어도 다른 번호 작업에 영향을 주지 않습니다. 
-* nTasks (--ntasks) 
-  각 작업당 사용할 프로세스의 갯수를 설정한다. 보통 전처리의 경우 1 이다.
-* CPUs-per-task (--cpus-per-task)   
-  Task(프로세스)가 사용할 CPU 코어의 개수를 설정한다. 
-
 [preprocess.sh]
 ```
 #!/bin/bash
@@ -81,6 +74,13 @@ srun python preprocess.py \
     --output_dir /data/processed \
     --model_id "meta-llama/Meta-Llama-3-8B"
 ```
+* Job Array(--array)
+  독립적인 작업의 갯수를 설정하는 것으로 slurm 스케줄링의 대상이다. Array ID($SLURM_ARRAY_TASK_ID)는 서로 완전히 독립적인 프로세스로 하나가 죽어도 다른 번호 작업에 영향을 주지 않습니다. 
+* nTasks (--ntasks) 
+  각 작업당 사용할 프로세스의 갯수를 설정한다. 보통 전처리의 경우 1 이다.
+* CPUs-per-task (--cpus-per-task)   
+  Task(프로세스)가 사용할 CPU 코어의 개수를 설정한다. 
+
 
 ```
 mkdir -p logs               # logs 디렉토리가 없으면 생성 (스크립트에서 지정한 출력 경로)

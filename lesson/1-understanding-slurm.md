@@ -262,6 +262,20 @@ Grafana + Prometheus (가장 추천)
 
 ## Slurm과 Docker/Singularity 컨테이너 연동 ##
 
+#### 1. Singularity (HPC 환경의 표준) ####
+HPC 클러스터에서 가장 권장되는 방식입니다. 루트 권한이 필요 없고, Slurm의 자원 제한(cgroups)과 완벽하게 호환됩니다. SingularityCE 공식 문서
+* 작동 방식: 컨테이너가 일반 프로세스처럼 실행되므로, Slurm이 GPU와 CPU 할당량을 그대로 제어할 수 있습니다.
+* 연동 방법: sbatch 스크립트 내에서 직접 실행합니다.
+```
+# sbatch 스크립트 예시
+#SBATCH --gres=gpu:1
+
+# Docker 이미지를 자동으로 가져와 실행 (Singularity가 변환)
+singularity exec --nv docker://pytorch/pytorch:latest python train.py
+```
+MPI와 GPU(NV) 지원이 강력하며, 사용자가 루트 권한을 가질 수 없어 보안상 매우 안전
+
+#### 2. ####
 
 
 * 직접적인 명령어(sbatch, squeue 등) 활용법

@@ -145,6 +145,9 @@ master_node ansible_host=10.0.0.10
         - "'Already exists' not in slurm_result.stderr"
 ```
 
+```
+ansible-playbook -i hosts.ini create_user.yml
+```
 
 
 ---

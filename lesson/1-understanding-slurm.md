@@ -60,7 +60,10 @@ sacctmgr modify account ai_project set GrpCPURunMins=10000
 ```
 (설명: 해당 팀이 사용 중인 총 CPU 시간 합계를 제한)
 
-
+* 설정값 확인
+```
+sacctmgr show association user=<사용자명> format=Account,User,Partition,GrpTRES,MaxJobs
+```
 
 ---
 

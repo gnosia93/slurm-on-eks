@@ -21,7 +21,7 @@
 * [C6. 복원력 및 작업 재시작 - 작성중](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/6-resilliency.md)
    * 갱 스케줄링 - 기본제공
    * [노드 드레인 / GPU 스케줄링 배제](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/6.drain-node-gpu.md)
-   * 장애노드 식별 및 자동 복구 (NPD) - slurm 자체에서는 제공하지 않음.
+   * [장애노드 식별 및 자동 복구](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/6.detecting-failure-recovery.md)
    * 훈련 자동 복구 / 재실행
 
 * [C7. 작업 모니터링 하기 - 작성중](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/7-job-monitoring.md)

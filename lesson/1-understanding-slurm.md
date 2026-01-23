@@ -9,7 +9,7 @@ Slurm은 Simple Linux Utility for Resource Management의 약자이다.
 * 대기열 관리 (Queue): 수많은 사용자가 동시에 작업을 던질 때, 우선순위(Priority)에 따라 줄을 세우고 자원이 나면 순서대로 투입합니다
 
 ### 아키텍처 ###
-
+![](https://github.com/gnosia93/slurm-on-eks/blob/main/image/slurm.png)
 
 ### 명령어 ###
 * scontrol - 클러스터 상태 및 구성 정보를 모니터링하고 수정할 수 있습니다.

@@ -180,6 +180,44 @@ Name=gpu Type=h100 File=/dev/nvidia[0-7]
 * TRES Billing 가중치: 위 설정의 TRESBillingWeights는 중요. 단순히 CPU 코어 수뿐만 아니라 GPU 사용량을 기준으로 과금(Accounting)이나 우선순위를 계산하도록 유도
 * Affinity 연동: GPU 전용 파티션을 쓸 때는 반드시 TaskPlugin=task/affinity와 SelectTypeParameters=CR_Core_Memory,CR_CORE_BINDING 설정을 켜서, GPU와 가까운 NUMA 노드의 CPU가 할당되도록 해야 성능 병목을 막을 수 있다.
 
+설정을 변경하신 후에는 반드시 서비스를 재시작해야 적용된다.
+```
+sudo scontrol reconfigure  # 마스터 노드에서 실행
+```
+#### 4. 작업 실행 ####
+다음 명령어로 GPU 파티션에 작업을 던질 수 있다.
+```
+sbatch -p gpu_part --gres=gpu:1 my_job.sh 
+```
+
+#### 5. 리소스 사용 제한  ####
+* 특정 그룹만 파티션 사용 허용 (AllowGroups)
+slurm.conf의 파티션 설정 부분에 AllowGroups 옵션을 추가한다.
+```
+# slurm.conf 설정 예시
+PartitionName=gpu_part Nodes=gpu-node[01-10] AllowGroups=ai_team,research_group Default=NO State=UP
+```
+
+* 작업당/사용자당 최대 GPU 사용 제한 (QoS 활용)
+파티션 설정보다 더 강력하고 세밀한 제어는 QoS(Quality of Service)를 통해 이루어진다.
+```
+# 한 번에 최대 4개의 GPU만 사용 가능하고, 최대 2개 작업만 동시 실행 가능한 QoS 생성
+sacctmgr add qos gpu_limit MaxTRESPerUser=gres/gpu=4 MaxJobsPerUser=2 Priority=100
+# ai_project 어카운트에 이 제한을 적용
+sacctmgr modify account ai_project set QoS=gpu_limit
+```
+
+* 작업당 최소/최대 GPU 할당량 강제 (Partition Limits)
+유저가 실수로 노드 전체 GPU를 다 써버리는 것을 방지하기 위해 파티션 자체에 제약을 건다.
+```
+# slurm.conf 설정 추가
+PartitionName=gpu_part ... MaxNodes=2 MaxCPUsPerNode=32 GrpTRES=gres/gpu=20
+```
+* MaxNodes=2: 한 작업이 노드 2개를 초과해서 잡을 수 없음.
+* GrpTRES=gres/gpu=20: 이 파티션 전체에서 동시에 돌아가는 GPU 합계를 20개로 제한.
+
+
+
 
 
 

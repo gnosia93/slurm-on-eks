@@ -27,8 +27,9 @@
 * [C9. 파이프라인 구성하기 - 작성중](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/9-making-pipeline.md)
 
 
-### _Appendix ###
+### _Appendix_ ###
 
+* [Slurm의 이해](https://github.com/gnosia93/slurm-on-eks/blob/main/lesson/1-understanding-slurm.md)
 
 ### _Revison History_ ###
 

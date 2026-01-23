@@ -216,11 +216,38 @@ PartitionName=gpu_part ... MaxNodes=2 MaxCPUsPerNode=32 GrpTRES=gres/gpu=20
 * MaxNodes=2: 한 작업이 노드 2개를 초과해서 잡을 수 없음.
 * GrpTRES=gres/gpu=20: 이 파티션 전체에서 동시에 돌아가는 GPU 합계를 20개로 제한.
 
+----
+## 작업 간의 우선순위(Fairshare) 관리 전략 ###
+Slurm의 Fairshare는 단순히 "누가 먼저 왔느냐"가 아니라, "과거에 자원을 얼마나 많이 썼느냐"를 기준으로 우선순위를 동적으로 조정하는 핵심 알고리즘입니다.
 
+#### 1. 가중치 설정 (Multifactor Priority) ####
+Slurm은 여러 요소를 합산해 최종 점수(Priority)를 냅니다. slurm.conf에서 Fairshare의 비중을 높여야 과거 사용량이 실제 우선순위에 반영됩니다
 
+* 설정 예시 (slurm.conf):
+```
+PriorityType=priority/multifactor
+PriorityWeightFairshare=10000  # Fairshare 비중을 크게 설정
+PriorityWeightAge=1000        # 대기 시간 비중은 보조적으로 설정
+PriorityDecayHalfLife=7-0     # 과거 사용량의 영향력을 7일마다 절반으로 감소
+```
+* 전략: DecayHalfLife를 통해 최근 사용량에 더 높은 벌점을 줍니다. 1~2주 전 기록은 잊어주고, 어제 많이 쓴 사람의 우선순위를 오늘 낮추는 방식입니다.
 
+#### 2. 어카운트별 지분(Share) 할당 ####
+모든 팀에 동일한 권한을 주기보다, 투자 비용이나 중요도에 따라 Raw Shares를 다르게 배정합니다
+```
+# A팀(메인 프로젝트)은 지분 100 부여
+sacctmgr modify account team_a set share=100
+# B팀(테스트/지원 팀)은 지분 50 부여
+sacctmgr modify account team_b set share=50
+```
+결과: 자원이 꽉 찼을 때, A팀 유저는 B팀 유저보다 2배 더 높은 확률로 먼저 자원을 할당받습니다.
 
+#### 3. '자원 독식' 방지를 위한 계층 구조 (Parent-Child) ####
+어카운트를 Tree 구조로 설계하여 상위 조직의 쿼터 내에서 하위 팀들이 경쟁하게 만듭니다.
+```
+구조: Research_Dept (Share: 100) -> AI_Lab (Share: 50), Bio_Lab (Share: 50)
+전략: AI_Lab의 한 명의 헤비 유저가 자원을 다 써버려도, 그 피해는 같은 AI_Lab 팀원들에게만 가고 Bio_Lab의 우선순위에는 영향을 주지 않도록 격리하는 효과가 있습니다
+```
 
-* 작업 간의 우선순위(Fairshare) 관리 전략
 * Slurm과 Docker/Singularity 컨테이너 연동 방식
 * 직접적인 명령어(sbatch, squeue 등) 활용법

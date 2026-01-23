@@ -153,10 +153,36 @@ master_node ansible_host=10.0.0.10
 ansible-playbook -i hosts.ini create_user.yml
 ```
 
+## Slurm을 이용한 GPU 전용 파티션 설정 ##
+Slurm에서 GPU 전용 파티션(Partition)을 설정하는 것은 특정 노드들을 그룹화하고, 그 안에서 GPU 자원을 효율적으로 분배하는 과정이다.
 
----
+#### 1. 노드 정의 (GRES 설정) ####
+가장 먼저 각 노드가 어떤 GPU를 몇 개 가지고 있는지 선언해야 한다. Slurm GRES(Generic Resource) 가이드를 참고하면, Generic Resource 설정을 통해 GPU를 인식시킨다.
+```
+# slurm.conf 파일 하단에 노드 정의
+NodeName=gpu-node[01-10] CPUs=64 RealMemory=256000 Sockets=2 CoresPerSocket=16 ThreadsPerCore=2 State=UNKNOWN GRES=gpu:h100:8
+```
+#### 2. 파티션(Partition) 정의 ####
+이제 정의된 노드들을 묶어 GPU 전용 파티션을 만든다. Slurm Partition 설정을 통해 접근 권한과 우선순위를 제어한다.
+```
+# slurm.conf 파일에 파티션 정의
+PartitionName=gpu_part Nodes=gpu-node[01-10] Default=NO MaxTime=INFINITE State=UP OverSubscribe=NO PriorityTier=100 TRESBillingWeights="CPU=1.0,Mem=0.25G,GRES/gpu=2.0"
+```
+* PriorityTier=100: 일반 파티션보다 우선순위를 높여 GPU 작업을 먼저 처리.
+* OverSubscribe=NO: 하나의 GPU에 여러 작업이 겹치지 않도록 독점 사용을 강제.
 
-* Slurm을 이용한 GPU 전용 파티션 설정법
+#### 3. gres.conf 설정 (각 계산 노드) ####
+Slurm이 물리적 GPU 장치 파일(/dev/nvidia0 등)과 통신할 수 있도록 각 계산 노드의 /etc/slurm/gres.conf를 작성한다.
+```
+# gres.conf (모든 GPU 노드 공통)
+Name=gpu Type=h100 File=/dev/nvidia[0-7]
+```
+* TRES Billing 가중치: 위 설정의 TRESBillingWeights는 중요. 단순히 CPU 코어 수뿐만 아니라 GPU 사용량을 기준으로 과금(Accounting)이나 우선순위를 계산하도록 유도
+* Affinity 연동: GPU 전용 파티션을 쓸 때는 반드시 TaskPlugin=task/affinity와 SelectTypeParameters=CR_Core_Memory,CR_CORE_BINDING 설정을 켜서, GPU와 가까운 NUMA 노드의 CPU가 할당되도록 해야 성능 병목을 막을 수 있다.
+
+
+
+
 * 작업 간의 우선순위(Fairshare) 관리 전략
 * Slurm과 Docker/Singularity 컨테이너 연동 방식
 * 직접적인 명령어(sbatch, squeue 등) 활용법

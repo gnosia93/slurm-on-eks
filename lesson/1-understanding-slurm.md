@@ -285,7 +285,17 @@ srun --container-image=nvcr.io#nvidia/tensorflow:23.02-tf1-py3 python -c "import
 ```
 사용자 권한(unprivileged)으로 컨테이너를 실행하며, MPI 및 GPU 가속 기능을 완벽히 지원합니다
 
-
+#### 3. Docker 데몬 직접 연동 (비권장) ####
+모든 컴퓨팅 노드에 Docker를 설치하고 사용자를 docker 그룹에 추가하여 실행하는 방식입니다.
+* 구현: sbatch 스크립트 안에서 docker run 명령어를 직접 호출합니다.
+```
+# sbatch 스크립트 예시
+srun docker run --rm --gpus all --net=host -v /shared_data:/data my_image:latest python train.py
+```
+* 문제점:
+  * 보안: 사용자가 호스트의 Root 권한을 탈취할 위험이 커 관리자가 기피합니다.
+  * EFA 연동: --net=host 및 장치 마운트(--device) 설정을 수동으로 정교하게 세팅해야 성능이 나옵니다.
+  * 멀티 노드: 여러 대의 서버를 묶어 학습할 때(MPI 등) 컨테이너 간 통신 설정이 매우 복잡합니다.
 
 * 직접적인 명령어(sbatch, squeue 등) 활용법
 

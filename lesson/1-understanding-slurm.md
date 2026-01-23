@@ -251,3 +251,14 @@ sacctmgr modify account team_b set share=50
 
 * Slurm과 Docker/Singularity 컨테이너 연동 방식
 * 직접적인 명령어(sbatch, squeue 등) 활용법
+
+## 팀별 GPU 사용량을 시각화 보고서로 만드는 방법 ##
+#### 1. 데이터 추출: sreport 활용 ####
+Slurm에 내장된 sreport 도구를 사용하면 특정 기간 동안의 GPU 사용량(TRES)을 팀(Account)별로 집계할 수 있습니다
+```
+sreport cluster AccountUtilizationByUser cluster=<클러스터명> start=now-30days format=Account,Login,Used -t Percent
+```
+#### 2. 시각화 방법  ####
+Grafana + Prometheus (가장 추천)
+* 실시간 대시보드를 구축하여 웹에서 상시 확인할 수 있는 방법입니다. Slurm-exporter를 활용합니다.
+* 방법: Slurm Exporter가 수집한 데이터를 Prometheus 저장소에 쌓고, Grafana에서 "GPU Usage by Account" 파이 차트나 시계열 그래프를 그립니다.

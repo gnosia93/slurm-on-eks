@@ -9,6 +9,27 @@ Slurm은 Simple Linux Utility for Resource Management의 약자이다.
 * 대기열 관리 (Queue): 수많은 사용자가 동시에 작업을 던질 때, 우선순위(Priority)에 따라 줄을 세우고 자원이 나면 순서대로 투입합니다
 
 
+## Accounting ##
+Slurm에서 어카운팅(Accounting)은 시스템 자원을 "누가, 언제, 얼마나" 사용했는지 기록하고 관리하는 핵심 감사 시스템으로
+단순한 기록을 넘어, 우선순위(Fairshare)를 결정하는 근거 데이터가 되기 때문에 매우 중요하다.
+
+### 1. 어카운팅의 핵심 구조: SlurmDBD ###
+* 어카운팅은 SlurmDBD(Slurm Database Daemon)라는 별도의 데몬과 MySQL/MariaDB를 통해 작동합니다.
+* 사용자(User): 작업을 던지는 개별 계정.
+* 어카운트(Account): 팀이나 프로젝트 단위 (예: ai_team, hpc_project). 사용자는 여러 어카운트에 속할 수 있습니다.
+* 연합(Association): [사용자 + 어카운트 + 파티션 + 클러스터]를 하나로 묶는 논리적 단위입니다.
+
+### 2. 어카운팅으로 할 수 있는 것 (Consultative Points) ###
+* 자원 사용량 추적: 특정 프로젝트가 이번 달에 GPU를 몇 시간(GPU-hours) 사용했는지 정확히 계산하여 과금(Billing)하거나 보고서를 뽑을 수 있다.
+* 우선순위(Fairshare) 계산: 어카운팅 데이터에 기록된 과거 사용량(Historical Usage)을 바탕으로, 최근에 자원을 많이 쓴 사용자의 우선순위는 낮추고, 덜 쓴 사용자는 높여주는 공평한 스케줄링을 구현한다.
+* 할당량 제한(Resource Limits): 특정 어카운트가 동시에 사용할 수 있는 GPU 개수나 최대 CPU 시간을 설정하여 자원 독점을 방지한다.
+
+### 3. 주요 명령어 ###
+* sacct: 종료된 작업의 상세 기록(사용 시간, 메모리 피크 등)을 조회
+* sacctmgr: 사용자, 어카운트, 쿼터(Quota) 등을 관리하는 관리자용 도구
+* sreport: 주간/월간 자원 이용률 보고서를 생성.
+
+
 ---
 
 * Slurm을 이용한 GPU 전용 파티션 설정법
